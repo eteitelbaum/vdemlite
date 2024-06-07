@@ -1,0 +1,95 @@
+---
+title: "Save V-Dem Lite Data"
+author: "Emmanuel Teitelbaum"
+format: html
+---
+
+There are some tags in the *Structure of V-Dem Indices, Components and Indicators* are missing from V-Dem. Let's check which ones are missing.
+
+```{r}
+library(dplyr)
+
+# Use devtools:load_all() to make lookup_tbl available
+devtools::load_all()
+
+# store the tags from the lookup table in a separate object
+tags <- lookup_tbl |> 
+  distinct(tag) 
+```
+
+Some of the tags in the lookup table are missing in the V-Dem data. Let's see which ones are missing.
+
+```{r}
+library(vdemdata)
+
+vdem_vars <- colnames(vdem)
+missing_tags <- setdiff(tags$tag, vdem_vars)
+
+# Display or use missing_tags as needed
+print(missing_tags)
+```
+
+Now let's create a downsized version of the V-Dem dataset with only the variables that are listed in the lookup table that we derived from [Structure of V-Dem Indices, Components and Indicators](https://v-dem.net/documents/41/v-dem_structureofaggregation_v14.pdf).
+
+```{r}
+library(vdemdata)
+
+vdemlite <- vdem |>
+  select(country_name, 
+         country_text_id,
+         country_id,
+         year, 
+         # all_of() won't work because some of the tags are missing in V-Dem
+         any_of(tags$tag)) |> # 
+  filter(year >= 1946) 
+```
+
+Let's generate a mising variable report. 
+
+```{r}
+# Load necessary libraries
+library(naniar)
+
+# Assuming vdem_lite is your data frame
+# Summarize missing data
+missing_summary <- miss_var_summary(vdemlite)
+
+# Define cutpoints for degrees of missingness
+cutpoints <- c(0, 1, 5, 10, 20, 50, 100)
+
+# Categorize variables based on the defined cutpoints
+missing_summary <- missing_summary |>
+  mutate(
+    missing_category = cut(
+      pct_miss,
+      breaks = cutpoints,
+      labels = c("< 1%", "1-5%", "6-10%", "11-20%", "21-50%", "51-100%"),
+      include.lowest = TRUE
+    )
+  )
+
+# Create a summary table
+missing_table <- missing_summary |>
+  group_by(missing_category) |>
+  summarise(
+    num_variables = n(),
+    pct_variables = n()/nrow(missing_summary),
+    avg_pct_missing = mean(pct_miss)
+   )
+
+# Print the summary table
+missing_table
+```
+
+Let's save the V-Dem Lite dataset to a file.
+
+Call `use_data()`:
+
+```{r}
+usethis::use_data(vdemlite, overwrite = TRUE)
+file.info("../data/vdemlite.rda")$size / 1024^2
+tools::resaveRdaFiles("../data/vdemlite.rda")
+tools::checkRdaFiles("../data/vdemlite.rda")
+file.info("../data/vdemlite.rda")$size / 1024^2
+```
+

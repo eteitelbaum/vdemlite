@@ -1,5 +1,5 @@
 ---
-title: "Save V-Dem Lite Data"
+title: "Save vdemlite Data"
 author: "Emmanuel Teitelbaum"
 format: html
 ---
@@ -41,10 +41,10 @@ vdemlite <- vdem |>
          year, 
          # all_of() won't work because some of the tags are missing in V-Dem
          any_of(tags$tag)) |> # 
-  filter(year >= 1946) 
+  filter(year >= 1970) 
 ```
 
-Let's generate a mising variable report. 
+Let's generate a missing variable report. 
 
 ```{r}
 # Load necessary libraries

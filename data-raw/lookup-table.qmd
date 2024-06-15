@@ -4,7 +4,7 @@ author: "Emmanuel Teitelbaum"
 format: html
 ---
 
-Let's download [Structure of V-Dem Indices, Components and Indicators](https://v-dem.net/documents/41/v-dem_structureofaggregation_v14.pdf) file from V-Dem. We will use this to create the lookup table for the V-Dem data.
+Let's download [Structure of V-Dem Indices, Components and indicators](https://v-dem.net/documents/41/v-dem_structureofaggregation_v14.pdf) file from V-Dem. We will use this to create the lookup table for the V-Dem data.
 
 ```{r}
 if (!file.exists("v-dem_structureofaggregation_v14.pdf")) {
@@ -15,9 +15,11 @@ if (!file.exists("v-dem_structureofaggregation_v14.pdf")) {
 }
 ```
 
-Next we will scrape the file for names and descriptions of variables. When we extrac the text, the underscores are missing in the variable names. We will add them back in with `stringr` and regular expressions.
+Next we will scrape the file for names and descriptions of variables. When we extract the text, the underscores are missing in the variable names. We will add them back in with `stringr` and regular expressions.
 
 ```{r}
+#| label: scrape-codebook
+
 # Load necessary libraries
 library(pdftools)
 library(stringr)
@@ -29,11 +31,11 @@ pdf_text <- pdf_text("v-dem_structureofaggregation_v14.pdf")
 prefixes <- c("v2x", "v2ex", "v2xca", "v2xcl", "v2xcs", "v2xdd", "v2xdd_i",
               "v2xdl", "v2xel", "v2xeg", "v2xex","v2xlg", "v2xnp", "v2xme",
               "v2xpa", "v2xpe", "v2xps", "v2xpas", "v2eltype",
-              "v2x_EDcomp", "v2x_ex", "v2x_frassoc", "v2x_freeexp", 
-              "v2clacjstm", "v2clacjstw", "v2cltrnslw", "v2elfrfair",
-              "v2elfrfair_osp", "v2elmulpar", "v2elmulpar_osp", "v2eltype",
-              "v2exremhsp", "v2exrmhsol", "v2exrmhsol_2", "v2exrmhsol_3",
-              "v2exrmhsol_4", "v2psnatpar")
+              "v2x_EDcomp", "v2x_ex", "v2x_frassoc", "v2x_freeexp", "v2clacjstm",
+              "v2clacjstw", "v2cltrnslw", "v2elfrfair", "v2elfrfair_osp",
+              "v2elmulpar", "v2elmulpar_osp", "v2eltype", "v2exremhsp",
+              "v2exrmhsol", "v2exrmhsol_2", "v2exrmhsol_3", "v2exrmhsol_4",
+              "v2psnatpar")
 
 # Loop through each prefix and add an underscore after it
 for (prefix in prefixes) {
@@ -45,7 +47,7 @@ for (prefix in prefixes) {
 #pdf_text
 ```
 
-Now we will organize the text into lines, code each line for its level in the V-Dem coding hierarchy (high-, mid- and lower-level indices and indicators) and create the initial data frame.
+Now we will organize the text into lines, code each line for its level in the V-Dem coding hierarchy (high-, mid- and lower-level indices and indicators) and create the initial data frame. But before we do that, we need to split into two parts because the spacing is different in sections 1.1 and 1.2 and this will affect our ability to code the levels variable. 
 
 ```{r}
 library(tibble)
@@ -54,35 +56,77 @@ library(tibble)
 pdf_text_lines <- str_split(pdf_text, "\n") |>
   unlist() 
 
+# create two character vectors
+part_1.1 <- pdf_text_lines[1:233]
+part_1.2 <- pdf_text_lines[234:length(pdf_text_lines)]
+
 # clean lines 
-clean_lines <- str_squish(pdf_text_lines)
-  
+clean_lines_1.1 <- str_squish(part_1.1)
+clean_lines_1.2 <- str_squish(part_1.2)
+```
+
+Code levels for part 1.1.
+
+```{r}  
+library(purrr)
+
 # Function to determine the level based on indentation
-determine_level <- function(line) {
-  if (str_detect(line, "^\\s{0,15}\\S")) {
-    return("High-level index")
-  } else if (str_detect(line, "^\\s{16,33}\\S")) {
-    return("Mid-level index")
-  } else if (str_detect(line, "^\\s{34,53}\\S")) {
-    return("Lower-level index")
+determine_level_1.1 <- function(line) {
+  if (str_detect(line, "^\\s{0,5}\\S")) {
+    return("high_level")
+  } else if (str_detect(line, "^\\s{15,20}\\S")) {
+    return("mid_level")
+  } else if (str_detect(line, "^\\s{30,40}\\S")) {
+    return("lower_level")
   } else {
-    return("Indicator")
+    return("indicator")
   }
 }
 
 # Apply the function to each line to determine the level
-levels <- sapply(pdf_text_lines, determine_level)
+levels_1.1 <- map_chr(part_1.1, determine_level_1.1) 
 
 # Create a data frame with the lines and their levels
-lines <- data.frame(line = clean_lines, level = levels, stringsAsFactors = FALSE)
+lines_1.1 <- data.frame(line = clean_lines_1.1, 
+                        level = levels_1.1, 
+                        part = "part_1",
+                        stringsAsFactors = FALSE)
 ```
 
-Now we can separate out and create columns for the names and tags, delete the original column that had both and drop the missing rows. 
+Code levels for 1.2
+
+```{r}
+# Function to determine the level based on indentation
+determine_level_1.2 <- function(line) {
+  if (str_detect(line, "^\\s{0,5}\\S")) {
+    return("high_level")
+  } else if (str_detect(line, "^\\s{15,30}\\S")) {
+    return("lower_level")
+  } else {
+    return("indicator")
+  }
+}
+
+# Apply the function to each line to determine the level
+levels_1.2 <- map_chr(part_1.2, determine_level_1.2) 
+
+# Create a data frame with the lines and their levels
+lines_1.2 <- data.frame(line = clean_lines_1.2, 
+                        level = levels_1.2, 
+                        part = "part_2",
+                        stringsAsFactors = FALSE)
+```
+
+Combine the two parts, separate the tag and variable name/description and delete the original column that had both and drop the missing rows. .
 
 ```{r}
 library(tidyr)
 library(dplyr)
 
+# Combine the two parts
+lines <- rbind(lines_1.1, lines_1.2)
+
+# Separate the tag and variable name/description
 lookup_tbl <- lines |>
   mutate(name = str_extract(line, ".*(?= v2)"),
          name = str_trim(name),
@@ -92,56 +136,69 @@ lookup_tbl <- lines |>
   drop_na() 
 ```
 
-Now let's add a column to the data frame that numbers the categories.
+Now let's add a coding for the "big 5" high-level indicators.
 
 ```{r}
-# Initialize the category column and counter
-lookup_tbl <- lookup_tbl |>
-  mutate(category = NA_character_)
+big_5 <- c("v2x_polyarchy", "v2x_libdem", "v2x_partipdem", "v2x_delibdem", "v2x_egaldem")
 
-counter <- 0
-
-# Iterate through the rows to assign categories based on the high-level indicator
 lookup_tbl <- lookup_tbl |>
-  rowwise() |>
-  mutate(category = {
-    if (str_detect(tag, "^v2x")) {
-      counter <<- counter + 1
-    }
-    paste0("category_", counter)
-  })
+  mutate(big_5 = ifelse(tag %in% big_5, "big_5", NA_character_))
 ```
 
-And let's also add a column with the category names. We will use the lower-level indicator names for the category names. Later we can use these to filter indicators affiliated with a specific category.
+Next, let's add a column with the lower-level category names. We will use the lower-level indicator names plus the suffix `_all` for the category names. Later we can use these to filter indicators affiliated with a specific category.
 
 ```{r}
-# Initialize the category column and current high-level tag
+# Initialize the category column and current lower level v2x tag
 lookup_tbl <- lookup_tbl |>
-  mutate(category_name = NA_character_)
+  mutate(ll_category = NA_character_)
 current_tag <- NA_character_
 
-# Iterate through the rows to assign categories based on the high-level indicator
+# Iterate through the rows to assign categories based on the lower-level indices
 lookup_tbl <- lookup_tbl |>
   rowwise() |>
-  mutate(category_name = {
-    if (str_detect(tag, "^v2x")) {
-      current_tag <<- tag
+  mutate(ll_category = {
+    if (level == "lower_level" && str_detect(tag, "^v2x")) {
+      current_tag <<- paste0(tag, "_all")
+    } else if (level %in% c("high_level", "mid_level")) {
+      current_tag <<- NA
     }
     current_tag
   }) %>%
   ungroup()
 ```
 
-Let's clean up the lookup table. We wil drop the party system variables, which will not be part of this package. We will also fix a couple of errors and change some variable names/descriptions. 
+Now let's add a similar column with the high-level category names.
+
+```{r}
+# Initialize the category column and current lower level v2x tag
+lookup_tbl <- lookup_tbl |>
+  mutate(hl_category = NA_character_)
+current_tag <- NA_character_
+
+# Iterate through the rows to assign categories based on the lower-level indices
+lookup_tbl <- lookup_tbl |>
+  rowwise() |>
+  mutate(hl_category = {
+    if (level == "high_level" && str_detect(tag, "^v2x")) {
+      current_tag <<- paste0(tag, "_all")
+    } else if (level %in% c("lower_level", "mid_level")) {
+      current_tag <<- current_tag
+    }
+    current_tag
+  }) %>%
+  ungroup()
+```
+
+Let's clean up the lookup table. We will drop the party system variables, which will not be part of this package. We will also fix a couple of errors and change some variable names/descriptions. There are quite a number of cases where the descriptions were cut off during the scraping process, so we will need to manually fix those.
 
 ```{r}
 lookup_tbl <- lookup_tbl |>
   # drop the party system variables
-  filter(!str_detect(category_name, "v2xpa")) |>
+  filter(!str_detect(hl_category, "v2xpa")) |>
   # change the tag to the correct one for removal by military
   mutate(tag = if_else(
     name == "HOS removal by the military in practice", 
-    "v2exrmhsho_4", 
+    "v2exrmhsho_4_mean", 
     tag)) |>
   # correct the tag for mislabeled "Freedom of domestic movement"
   mutate(tag = if_else(
@@ -158,11 +215,432 @@ lookup_tbl <- lookup_tbl |>
     tag == "v2xcl_slave",
     "Freedom from forced labor",
     name)) |>
-  # finally, change the category name for "Freedom of domestic movement"
-  mutate(category_name = if_else(
-    category == "category_102",
-    "v2xcl_dmove",
-    category_name))
+  # change the category name for "Freedom of domestic movement"
+  mutate(hl_category = if_else(
+    tag %in% c("v2xcl_dmove", "v2cldmovem", "v2cldmovew") & is.na(ll_category),
+    "v2xcl_dmove_all",
+    hl_category)) |>
+  # edit the name for v2x_freexp
+  mutate(name = if_else(
+    tag == "v2x_freexp",
+    "Freedom of expression & alt sources of info index",
+    name)) |>
+  # edit the name for v2clacfree
+  mutate(name = if_else(
+    tag == "v2clacfree",
+    "Freedom of academic and cultural expression",
+    name)) |>
+  # edit the name for v2exaphogp
+  mutate(name = if_else(
+    tag == "v2exaphogp",
+    "HOG selection by legislature in practice",
+    name)) |>
+  # edit the name for v2exapup
+  mutate(name = if_else(
+    tag == "v2exapup",
+    "Chief executive appointed by upper chamber",
+    name)) |>
+  # edit the name for v2exapupap
+  mutate(name = if_else(
+    tag == "v2exapupap",
+    "Chief executive appointment by upper chamber implicit approval",
+    name)) |>
+  # edit the name for v2lginello
+  mutate(name = if_else(
+    tag == "v2lginello",
+    "Percentage of indirectly elected legislators lower chamber",
+    name)) |>
+  # edit the name for v2lginelup
+  mutate(name = if_else(
+    tag == "v2lginelup",
+    "Percentage of indirectly elected legislators upper chamber",
+    name)) |>
+  # edit the name for v2cldmovem
+  mutate(name = if_else(
+    tag == "v2cldmovem",
+    "Freedom of domestic movement for men",
+    name)) |>
+  # edit the name for v2cldmovew
+  mutate(name = if_else(
+    tag == "v2cldmovew",
+    "Freedom of domestic movement for women",
+    name)) |>
+  # edit the name for v2clrspct
+  mutate(name = if_else(
+    tag == "v2clrspct",
+    "Rigorous and impartial public administration",
+    name)) |>
+  # edit the name for v2cltrnslw
+  mutate(name = if_else(
+    tag == "v2cltrnslw",
+    "Transparent laws with predictable enforcement",
+    name)) |>
+  # edit the name for v2lgqstexp
+  mutate(name = if_else(
+    tag == "v2lgqstexp",
+    "Legislature questions officials in practice",
+    name)) |>
+  # edit the name for v2ddsigdrf
+  mutate(name = if_else(
+    tag == "v2ddsigdrf",
+    "Referendums signature-gathering period",
+    name)) |>
+  # edit the name for v2ddsiglci
+  mutate(name = if_else(
+    tag == "v2ddsiglci",
+    "Initiatives signature-gathering time limit",
+    name)) |>
+  # edit the name for v2ddyrci
+  mutate(name = if_else(
+    tag == "v2ddyrci",
+    "Occurrence of citizen-initiative this year",
+    name)) |>
+  # edit the name for v2ddadmor
+  mutate(name = if_else(
+    tag == "v2ddadmor",
+    "Obligatory referendum administrative threshold",
+    name)) |>
+  # edit the name for v2ddappor
+  mutate(name = if_else(
+    tag == "v2ddappor",
+    "Obligatory referendum approval threshold",
+    name)) |>
+  # edit the name for v2ddpartor
+  mutate(name = if_else(
+    tag == "v2ddpartor",
+    "Obligatory referendum participation threshold",
+    name)) |>
+  # edit the name for v2ddyror
+  mutate(name = if_else(
+    tag == "v2ddyror",
+    "Occurrence of obligatory referendum this year",
+    name)) |>
+  # edit the name for v2clacjust
+  mutate(name = if_else(
+    tag == "v2clacjust",
+    "Social class equality in respect for civil liberties",
+    name)) |>
+  # edit the name for v2pepwrses
+  mutate(name = if_else(
+    tag == "v2pepwrses",
+    "Power distributed by socioeconomic position",
+    name)) |>
+  # edit the name for v2cltrnslw_osp
+  mutate(name = if_else(
+    tag == "v2cltrnslw_osp",
+    "Transparent laws with predictable enforcement",
+    name)) |>
+  # edit the name for v2exremhsp_ord
+  mutate(name = if_else(
+    tag == "v2exremhsp_ord",
+    "HOS removal by legislature in practice (Ordinal)",
+    name)) |>
+  # edit the name for v2exrmhsol_2_mean
+  mutate(name = if_else(
+    tag == "v2exrmhsol_2_mean",
+    "HOS removal by the ruling party or party leadership body in a one-party system in practice (Mean)",
+    name)) |>
+  # edit the name for v2exrmhsol_3_mean
+  mutate(name = if_else(
+    tag == "v2exrmhsol_3_mean",
+    "HOS removal by a royal council in practice (Mean)",
+    name)) |>
+  # edit the name for v2exrmhsho_4_mean
+  mutate(name = if_else(
+    tag == "v2exrmhsho_4_mean",
+    "HOS removal by the military in practice (Mean)",
+    name)) |>
+  # edit the name for v2peapsecon
+  mutate(name = if_else(
+    tag == "v2peapsecon",
+    "Access to public services distributed by socio-economic position",
+    name)) |>
+  # edit the name for v2peasbecon
+  mutate(name = if_else(
+    tag == "v2peasbecon",
+    "Access to state business opportunities by socio-economic position",
+    name)) |>
+  # edit the name for v2peasjsoecon
+  mutate(name = if_else(
+    tag == "v2peasjsoecon",
+    "Access to state jobs by socio-economic position",
+    name)) |>
+  # edit the name for v2peapsgen
+  mutate(name = if_else(
+    tag == "v2peapsgen",
+    "Access to public services by gender",
+    name)) |>
+  # edit the name for v2peasbgen
+  mutate(name = if_else(
+    tag == "v2peasbgen",
+    "Access to state business opportunities by gender",
+    name)) |>
+  # edit the name for v2clgeocl
+  mutate(name = if_else(
+    tag == "v2clgeocl",
+    "Urban-rural location equality in respect for civil liberties",
+    name)) |>
+  # edit the name for v2peapsgeo
+  mutate(name = if_else(
+    tag == "v2peapsgeo",
+    "Access to public services by urban-rural location",
+    name)) |>
+  # edit the name for v2peasbegeo
+  mutate(name = if_else(
+    tag == "v2peasbegeo",
+    "Access to state business opportunities by urban-rural location",
+    name)) |>
+  # edit the name for v2peasjgeo
+  mutate(name = if_else(
+    tag == "v2peasjgeo",
+    "Access to state jobs by urban-rural location",
+    name)) |>
+  # edit the name for v2clpolcl
+  mutate(name = if_else(
+    tag == "v2clpolcl",
+    "Political group equality in respect for civil liberties",
+    name)) |>
+  # edit the name for v2peapspo
+  mutate(name = if_else(
+    tag == "v2peapspo",
+    "Access to public services distributed by political group",
+    name)) |>
+  # edit the name for v2peasbepol
+  mutate(name = if_else(
+    tag == "v2peasbepol",
+    "Access to state business opportunities by political group",
+    name)) |>
+  # edit the name for v2clsocgrp
+  mutate(name = if_else(
+    tag == "v2clsocgrp",
+    "Social group equality in respect for civil liberties",
+    name)) |>
+  # edit the name for v2peapssoc
+  mutate(name = if_else(
+    tag == "v2peapssoc",
+    "Access to public services distributed by social group",
+    name)) |>
+  # edit the name for v2peasbsoc
+  mutate(name = if_else(
+    tag == "v2peasbsoc",
+    "Access to state business opportunities by social group",
+    name)) |>
+  # edit the name for v2ddlexor
+  mutate(name = if_else(
+    tag == "v2ddlexor",
+    "Enforcement of constitutional changes through popular vote",
+    name)) |>
+  # edit the name for v2xel_elecparl
+  mutate(name = if_else(
+    tag == "v2xel_elecparl",
+    "Legislative or constituent assembly election",
+    name)) |>
+  # edit the name for v2cafexch
+  mutate(name = if_else(
+    tag == "v2cafexch",
+    "Freedom of academic exchange and dissemination",
+    name)) |>
+  # edit the name for v2peapspol
+  mutate(name = if_else(
+    tag == "v2peapspol",
+    "Access to public services distributed by political groups",
+    name))
+```
+
+Let's add some of the indicators from section 3 of the codebook that are not included in the structure of aggregation document. 
+
+```{r}
+# Legitimation
+legitimation <- data.frame(
+  tag = c(
+    "v2exl_legitideol",
+    "v2exl_legitideolcr",
+    "v2exl_legitlead",
+    "v2exl_legitperf",
+    "v2exl_legitratio"
+    ),
+  name = c(
+    "Ideology",
+    "Ideology character",
+    "Person of the Leader",
+    "Performance legitimation",
+    "Rational-legal legitimation"
+    )
+) |>
+  mutate(
+    level = "legitimation",
+    part = NA_character_,
+    big_5 = NA_character_,
+    ll_category = NA_character_,
+    hl_category = NA_character_
+  )
+
+# Civic space
+civic_space <- data.frame(
+  tag = c(
+    "v2cacamps", 
+    "v2caviol", 
+     "v2caassemb", 
+      "v2casoe"
+    ),
+  name = c(
+    "Political polarization",
+    "Political violence",
+    "Freedom of peaceful assembly",
+    "State of emergency"
+    ) 
+  ) |>
+  mutate(
+    level = "civic_space",
+    part = NA_character_,
+    big_5 = NA_character_,
+    ll_category = NA_character_,
+    hl_category = NA_character_
+    )
+
+# Mass mobilization 
+mass_mobilization <- data.frame(
+  tag = c(
+    "v2cagenmob",
+    "v2caconmob",
+    "v2cademmob",
+    "v2caautmob"
+    ),
+  name = c(
+    "Mass mobilization",
+    "Mass mobilization concentration",
+    "Mobilization for democracy",
+    "Mobilization for autocracy"
+    )
+  ) |>
+  mutate(
+    level = "mass_mobilization",
+    part = NA_character_,
+    big_5 = NA_character_,
+    ll_category = NA_character_,
+    hl_category = NA_character_
+  )
+
+# Citizen engagement
+citizen_engagement <- data.frame(
+  tag = c(
+    "v2castate",
+    "v2catrauni",
+    "v2capolit",
+    "v2canonpol"
+    ),
+  name = c(
+    "Engagement in state-administered mass organizations",
+    "Engagement in independent trade unions",
+    "Engagement in independent political associations",
+    "Engagement in independent non-political associations"
+    ) 
+  )|>
+  mutate(
+    level = "citizen_engagement",
+    part = NA_character_,
+    big_5 = NA_character_,
+    ll_category = NA_character_,
+    hl_category = NA_character_
+  )
+
+# Academic space
+academic_space <- data.frame(
+  tag = c(
+    "v2cauni",
+    "v2canuni",
+    "v2caprotac",
+    "v2cafres",
+    "v2cafexch",
+    "v2cainsaut",
+    "v2casurv",
+    "v2cacritic",
+    "v2cacadfree"
+  ),
+  name = c(
+    "Existence of universities",
+    "Total number of universities",
+    "Constitutional protection for academic freedom",
+    "Freedom to research and teach",
+    "Freedom of academic exchange and dissemination",
+    "Institutional autonomy",
+    "Campus integrity",
+    "Academics as critics",
+    "International legal commitment to academic freedom under ICESCR")
+) |>
+  mutate(
+    level = "academic_space",
+    part = NA_character_,
+    big_5 = NA_character_,
+    ll_category = NA_character_,
+    hl_category = NA_character_
+  )
+
+# Combine the tables
+lookup_tbl <- lookup_tbl |>
+  bind_rows(
+    legitimation,
+    civic_space,
+    mass_mobilization,
+    citizen_engagement,
+    academic_space
+    )
+```
+
+Now, let's add some of V-Dem's background variables to the lookup table. 
+
+```{r}
+background_fctrs <- data.frame(
+  tag = c("e_peaveduc", 
+          "e_area", 
+          "e_regionpol", 
+          "e_regionpol_6C", 
+          "e_gdppc", 
+          "e_total_resources_income_pc", 
+          "e_miurbani", 
+          "e_pechmor", 
+          "e_pelifeex", 
+          "e_wb_pop", 
+          "e_pt_coup"),
+  name = c("Eductaion 15+", 
+           "Land area (sq. km)", 
+           "Region - tenfold classification", 
+           "Region - sixfold classification", 
+           "Farris et. al. point estimate of GDP per capita", 
+           "Petroleum, coal, natural gas production per capita", 
+           "Urbanization rate", 
+           "Child mortality rate", 
+           "Average life expectancy", 
+           "World Bank population estimate", 
+           "Number of successful coups")
+) |>
+  mutate(
+    level = "background",
+    part = NA_character_,
+    big_5 = NA_character_,
+    ll_category = NA_character_,
+    hl_category = NA_character_
+  )
+
+lookup_tbl <- lookup_tbl |>
+  bind_rows(background_fctrs)
+```
+
+And finally, let's add a column to the lookup table that is NA by default and lables the additional categories, e.g. legitimation, civic space, etc. 
+
+```{r}
+lookup_tbl <- lookup_tbl |>
+  mutate(
+    addl_category = case_when(
+      level == "legitimation" ~ "legitimation",
+      level == "civic_space" ~ "civic space",
+      level == "mass_mobilization" ~ "mass mobilization",
+      level == "citizen_engagement" ~ "citizen engagement",
+      level == "academic_space" ~ "academic space",
+      level == "background" ~ "background",
+      TRUE ~ NA_character_
+    )
+  )
 ```
 
 Call `use_data()` and save as internal data.

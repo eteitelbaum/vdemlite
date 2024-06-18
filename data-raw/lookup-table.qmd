@@ -31,7 +31,7 @@ pdf_text <- pdf_text("v-dem_structureofaggregation_v14.pdf")
 prefixes <- c("v2x", "v2ex", "v2xca", "v2xcl", "v2xcs", "v2xdd", "v2xdd_i",
               "v2xdl", "v2xel", "v2xeg", "v2xex","v2xlg", "v2xnp", "v2xme",
               "v2xpa", "v2xpe", "v2xps", "v2xpas", "v2eltype",
-              "v2x_EDcomp", "v2x_ex", "v2x_frassoc", "v2x_freeexp", "v2clacjstm",
+              "v2x_EDcomp", "v2x_ex", "v2x_frassoc", "v2x_freexp", "v2clacjstm",
               "v2clacjstw", "v2cltrnslw", "v2elfrfair", "v2elfrfair_osp",
               "v2elmulpar", "v2elmulpar_osp", "v2eltype", "v2exremhsp",
               "v2exrmhsol", "v2exrmhsol_2", "v2exrmhsol_3", "v2exrmhsol_4",

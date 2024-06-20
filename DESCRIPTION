@@ -1,9 +1,9 @@
 Package: vdemlite
 Title: A Lightwight Tool for Querying V-Dem Data
-Version: 0.0.0.9000
+Version: 0.1.1
 Authors@R: 
     person("Emmanuel", "Teitelbaum", , "emmanuel.teitelbaum@gmail.com", role = c("aut", "cre"),
-           comment = c(ORCID = "YOUR-ORCID-ID"))
+           comment = c(ORCID = "0000-0001-7089-0588"))
 Description: 
     vdemlite provides provides users with the ability to query a slimmed doown version
     of the V-Dem dataset. The core function, fetchdem, allow users to specify indicators, 
@@ -19,5 +19,7 @@ Depends:
 LazyData: true
 Imports:
     dplyr,
-    ggplot2,
-    tidyr
+    tidyr,
+    gt,
+    gtExtras,
+    rlang

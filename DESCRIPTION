@@ -1,6 +1,6 @@
 Package: vdemlite
 Title: A Lightwight Tool for Querying V-Dem Data
-Version: 0.1.2
+Version: 0.0.2.9000
 Authors@R: 
     person("Emmanuel", "Teitelbaum", , "emmanuel.teitelbaum@gmail.com", role = c("aut", "cre"),
            comment = c(ORCID = "0000-0001-7089-0588"))
@@ -20,6 +20,7 @@ LazyData: true
 Imports:
     dplyr,
     tidyr,
+    stringr,
     gt,
     gtExtras,
     rlang

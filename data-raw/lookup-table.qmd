@@ -223,6 +223,11 @@ lookup_tbl <- lookup_tbl |>
   # edit the name for v2x_freexp
   mutate(name = if_else(
     tag == "v2x_freexp",
+    "Freedom of expression index",
+    name)) |>
+  # edit the name for v2x_freexp_altinf
+  mutate(name = if_else(
+    tag == "v2x_freexp_altinf",
     "Freedom of expression & alt sources of info index",
     name)) |>
   # edit the name for v2clacfree
@@ -444,7 +449,7 @@ lookup_tbl <- lookup_tbl |>
   mutate(name = if_else(
     tag == "v2peapspol",
     "Access to public services distributed by political groups",
-    name))
+    name)) 
 ```
 
 Let's add some of the indicators from section 3 of the codebook that are not included in the structure of aggregation document. 

@@ -1,0 +1,17 @@
+#' The V-Dem Lite Dataset
+#'
+#' A subset of the Varieties of Democracy (V-Dem) dataset that incorporates data for 297 V-Dem indices and indicators from 1970 to the present. The dataset incorporates the indices and indicators listed in Appendix A of the V-Dem Codebook.
+#'
+#' @format
+#' A data frame with 297 variables and 9170 observations.
+#'
+#' @source <<https://www.v-dem.net/data/the-v-dem-dataset/>
+#'
+#' @references
+#'
+#' Coppedge, Michael, John Gerring, Carl Henrik Knutsen, Staffan I. Lindberg, Jan Teorell, David Altman, Fabio Angiolillo, Michael Bernhard, Cecilia Borella, Agnes Cornell, M. Steven Fish, Linnea Fox, Lisa Gastaldi, Haakon Gjerlow, Adam Glynn, Ana Good God, Sandra Grahn, Allen Hicken, Katrin Kinzelbach, Joshua Krusell, Kyle L. Marquardt, Kelly McMann, Valeriya Mechkova, Juraj Medzihorsky, Natalia Natsika, Anja Neundorf, Pamela Paxton, Daniel Pemstein, Josefine Pernes, Oskar Rydén, Johannes von Römer, Brigitte Seim, Rachel Sigman, Svend-Erik Skaaning, Jeffrey Staton, Aksel Sundström, Eitan Tzelgov, Yi-ting Wang, Tore Wig, Steven Wilson and Daniel Ziblatt. 2024. ”V-Dem \[Country-Year/Country-Date\] Dataset v14” Varieties of Democracy (V-Dem) Project. <https://doi.org/10.23696/mcwt-fr58>
+#'
+#'Coppedge, Michael, John Gerring, Carl Henrik Knutsen, Staffan I. Lindberg, Jan Teorell, David Altman, Fabio Angiolillo, Michael Bernhard, Cecilia Borella, Agnes Cornell, M. Steven Fish, Linnea Fox, Lisa Gastaldi, Haakon Gjerlow, Adam Glynn, Ana Good God, Sandra Grahn, Allen Hicken, Katrin Kinzelbach, Kyle L. Marquardt, Kelly McMann, Valeriya Mechkova, Anja Neundorf, Pamela Paxton, Daniel Pemstein, Oskar Rydén, Johannes von Römer, Brigitte Seim, Rachel Sigman, Svend-Erik Skaaning, Jeffrey Staton, Aksel Sundström, Eitan Tzelgov, Luca Uberti, Yi-ting Wang, Tore Wig, and Daniel Ziblatt. 2024. ”V-Dem Codebook v14” Varieties of Democracy (V-Dem) Project. <http://dx.doi.org/10.2139/ssrn.4774440>
+#'
+#'Pemstein, Daniel, Kyle L. Marquardt, Eitan Tzelgov, Yi-ting Wang, Juraj Medzihorsky, Joshua Krusell, Farhad Miri, and Johannes von Römer. 2024. “The V-Dem Measurement Model: Latent Variable Analysis for Cross-National and Cross-Temporal Expert-Coded Data”. V-Dem Working Paper No. 21. 9th edition. University of Gothenburg: Varieties of Democracy Institute.
+"vdemlite"

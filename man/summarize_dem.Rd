@@ -21,7 +21,7 @@ summarize_dem(
 
 \item{countries}{An optional character vector specifying the countries to include (default is NULL, which includes all countries).}
 
-\item{visualization}{An optional character string specifying the type of visualization to include in the summary table (default is NULL, which includes no visualization). Options include "sparkline", "density", or "histogram". Note that it is not recommended to set the visualization parameter if the number of selected countries is large, as it may take a long time to render the table.}
+\item{visualization}{An optional character string specifying the type of visualization to include in the summary table (default is NULL, which includes no visualization). Options include "sparkline", "density" for density plots, or "histogram". Note that it is not recommended to set the visualization parameter if the number of selected countries is large, as it may take a long time to render the table.}
 }
 \value{
 A table summarizing the specified indicator by country.
@@ -30,5 +30,16 @@ A table summarizing the specified indicator by country.
 This function summarizes a specified V-Dem indicator by country for a given time period.
 }
 \examples{
+# Summarize the liberal democracy index for all countries and years
+summarize_dem(indicator = "v2x_libdem")
+
+# Summarize the polyarchy index for all countries for the years 2000-2020
 summarize_dem(indicator = "v2x_polyarchy", start_year = 2000, end_year = 2020)
+
+# Summarize the civil liberties index for the BRICS with sparklines
+countries = c("BRA", "RUS", "IND", "CHN", "ZAF")
+summarize_dem(indicator = "v2x_civlib",
+              countries = countries,
+              visualization = "sparkline")
+
 }

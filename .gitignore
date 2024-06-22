@@ -1,1 +1,14 @@
-.Rproj.user
+# History files
+.Rhistory
+.Rapp.history
+
+# RStudio files
+.Rproj.user/
+*.Rproj
+
+# MacOS files
+.DS_Store
+
+# Package archives (optional if you don't want to track local builds, but still keep final submission tarballs)
+#*.tar.gz
+

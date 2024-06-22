@@ -1,6 +1,6 @@
 Package: vdemlite
 Title: A Lightwight Tool for Querying V-Dem Data
-Version: 0.0.2.9000
+Version: 0.0.3.9000
 Authors@R: 
     person("Emmanuel", "Teitelbaum", , "emmanuel.teitelbaum@gmail.com", role = c("aut", "cre"),
            comment = c(ORCID = "0000-0001-7089-0588"))

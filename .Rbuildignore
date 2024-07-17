@@ -5,3 +5,7 @@
 ^\.DS_Store$
 ^data-raw$
 ^README\.Rmd$
+^_pkgdown\.yml$
+^docs$
+^pkgdown$
+^\.github$

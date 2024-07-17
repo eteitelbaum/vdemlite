@@ -10,7 +10,7 @@ Description:
     time periods, and countries of interest, with options to return data in wide or long 
     format. 
 License: CC BY-SA 4.0 + file LICENSE
-URL: https://creativecommons.org/licenses/by-sa/4.0/
+URL: https://creativecommons.org/licenses/by-sa/4.0/, https://eteitelbaum.github.io/vdemlite/
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.1

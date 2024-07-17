@@ -20,7 +20,7 @@ library(vdemlite)
 
 # Introduction
 
-`vdemlite` is a package that provides a lightweight version of the Varieties of Democracy (V-Dem) dataset that incorporates many of the core measures of V-Dem for the contemporary period and is easy to work with in R. The package provides functions for downloading and loading the data, as well as for exploring the data and searching for particular indicators.
+`vdemlite` provides a lightweight version of the Varieties of Democracy (V-Dem) dataset that incorporates many of the core measures of V-Dem for the contemporary period and is easy to work with in R. The package provides functions for downloading and loading the data, as well as for exploring the data and searching for particular indicators.
 
 The package addresses two challenges that arise with the using full dataset. First, it can be readily used in cloud and production environments like Posit Cloud and shinyapps.io without having to purchase additional computing resources. Second, it provides user-friendly functions and arguments that makes it easier to download, filter, and explore the data in R. The goal is to make the dataset more accessible to new users who may not have completely developed a wrangling workflow and more convenient for more advanced users who frequently use V-Dem for contemporary analysis. 
 

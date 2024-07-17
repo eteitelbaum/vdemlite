@@ -7,15 +7,15 @@
 #' @import dplyr stringr gt gtExtras
 #' @examples
 #' # Return the full table of indices
-#' search_dem()
+#' searchdem()
 #'
 #' # Return indices and indicators used to construct polyarchy
-#' search_dem("v2x_polyarchy")
+#' searchdem("v2x_polyarchy")
 #'
 #' # Return indicators used to construct women's political empowerment and rule of law indices
-#' search_dem(c("v2x_gender", "v2x_rule"))
+#' searchdem(c("v2x_gender", "v2x_rule"))
 #' @export
-search_dem <- function(indices = NULL) {
+searchdem <- function(indices = NULL) {
 
   if (!is.null(indices)) {
     # Initialize vector of indicators

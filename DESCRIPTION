@@ -24,3 +24,7 @@ Imports:
     gt,
     gtExtras,
     rlang
+Suggests: 
+    knitr,
+    rmarkdown
+VignetteBuilder: knitr

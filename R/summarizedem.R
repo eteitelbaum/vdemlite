@@ -10,14 +10,14 @@
 #' @return A table summarizing the specified indicator by country.
 #' @examples
 #' # Summarize the liberal democracy index for all countries and years
-#' summarize_dem(indicator = "v2x_libdem")
+#' summarizedem(indicator = "v2x_libdem")
 #'
 #' # Summarize the polyarchy index for all countries for the years 2000-2020
-#' summarize_dem(indicator = "v2x_polyarchy", start_year = 2000, end_year = 2020)
+#' summarizedem(indicator = "v2x_polyarchy", start_year = 2000, end_year = 2020)
 #'
 #' # Summarize the civil liberties index for the BRICS with sparklines
 #' countries = c("BRA", "RUS", "IND", "CHN", "ZAF")
-#' summarize_dem(indicator = "v2x_civlib",
+#' summarizedem(indicator = "v2x_civlib",
 #'               countries = countries,
 #'               visualization = "sparkline")
 #'
@@ -25,7 +25,7 @@
 #' @importFrom stats median sd
 #' @importFrom rlang sym !!
 #' @export
-summarize_dem <- function(indicator = NULL,
+summarizedem <- function(indicator = NULL,
                           start_year = 1970,
                           end_year = 2023,
                           countries = NULL,

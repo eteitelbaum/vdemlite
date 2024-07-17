@@ -1,0 +1,228 @@
+---
+title: "vdemlite"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{vdemlite}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(vdemlite)
+```
+
+# Introduction
+
+`vdemlite` is a package that provides a lightweight version of the Varieties of Democracy (V-Dem) dataset that incorporates many of the core measures of V-Dem for the contemporary period and is easy to work with in R. The package provides functions for downloading and loading the data, as well as for exploring the data and searching for particular indicators.
+
+The package addresses two challenges that arise with the using full dataset. First, it can be readily used in cloud and production environments like Posit Cloud and shinyapps.io without having to purchase additional computing resources. Second, it provides user-friendly functions and arguments that makes it easier to download, filter, and explore the data in R. The goal is to make the dataset more accessible to new users who may not have completely developed a wrangling workflow and more convenient for more advanced users who frequently use V-Dem for contemporary analysis. 
+
+## Data and Functionality
+
+`vdemlite` incorporates data for 297 variables V-Dem indices and indicators from 1970 to the present and is organized around the structure of aggregation outlined in [this document](https://v-dem.net/documents/41/v-dem_structureofaggregation_v14.pdf) and in Appendix A of the [V-Dem Codebook](https://www.v-dem.net/documents/38/V-Dem_Codebook_v14.pdf). 
+
+There are three primary functions in the `vdemlite` package: 
+  - `fetchdem()` provides functionality for downloading V-Dem data included in `vdemlite` and loads it into R. 
+  - `summarizedem()` provides an interactive table of summary statistics of the data and, for smaller queries, some capacity for visualization. 
+  - `searchdem()` function returns an interactive, searchable table of the dataset.
+
+You can install the latest version of `vdemlite` from GitHub using the `pak` package:
+
+```{r, eval = FALSE}
+#install.packages("pak)
+pak::pkg_install("eteitelbaum/vdemlite")
+```
+
+Alternatively, you could use the `remotes` package or the `devtools` package:
+
+```{r, eval = FALSE}
+remotes::install_github("eteitelbaum/vdemlite")
+# or
+devtools::install_github("eteitelbaum/vdemlite")
+```
+
+# Querying V-Dem Data
+
+The main function in `vdemlite` is `fetchdem()`, which can be used to query the `vdemlite` dataset and retrieve data for specific indicators, groups of indicators, years, and countries. The function returns a data frame with the requested data.
+
+```{r, eval = FALSE}
+fetchdem(indicators = NULL, 
+          start_year = 1970, 
+          end_year = 2023,
+          countries = NULL,
+          wide = TRUE)
+```
+
+Simply calling `fetchdem()` will return the entire `vdemlite` dataset. But `fetchdem()` takes up to five arguments that allow the user to conduct more targeted queries: `indicators`, `start_year`, `end_year`, `countries`, and `wide`.
+
+The `indicators` argument is a character vector of V-Dem indicator codes but also groups of variables such as "big_5" (for the five main high-level democracy indexes) or "v2x_libdem_all" (for all of the indices and indicators used in the construction of the liberal democracy index.
+
+The `start_year` and `end_year` arguments specify the range of years to fetch data for. The `countries` argument is a character vector of three-digit [iso3c](https://www.iban.com/country-codes) country codes. The `wide` argument specifies whether to return the data in wide format (the default) or long format.
+
+## Basic Usage
+
+Let's say you wanted to get the Polyarchy score for all countries for the years 1980-2020. You could do this by setting `indicators` to `v2x_polyarchy` and `start_year` and `end_year` to 1980 and 2020, respectively.
+
+```{r}
+library(vdemlite)
+
+# Polyarchy score for all countries for 1980-2020
+polyarchy <- fetchdem(indicators = "v2x_polyarchy",
+                       start_year = 1980, end_year = 2020)
+```
+
+We can add indicators to our desired list or filter for specific countries by using the combine function (`c()`). For example, if you wanted to get the polyarchy and clean elections index for the USA and Sweden, you could set `indicators` to `c("v2x_polyarchy", "v2xel_frefair")` and `countries` to `c("USA", "SWE")`.
+
+```{r}
+# Polyarchy and clean elections index for USA and Sweden for 2000-2020
+my_indicators <- fetchdem(indicators = c("v2x_polyarchy", "v2xel_frefair"),
+                           countries = c("USA", "SWE"))
+```
+
+By default, `fetchdem()` returns the data in wide format. However, you can also return the data in long format by setting the `wide` argument to `FALSE`.
+
+```{r}
+# Five main high-level indices for all countries and years in long format
+big_5 <- fetchdem(indicators = c("v2x_polyarchy", "v2xel_frefair"),
+                   countries = c("USA", "SWE"), wide = FALSE)
+```
+
+## Querying Groups of Indicators
+
+`fetchdem()` can also be used to retrieve groups of indexes and indicators that follow the structure of aggregation outlined in Appendix A of the V-Dem Codebook. 
+
+Setting indicators to `big_5` will retrieve the five main high-level indices for all countries and years.
+
+```{r}
+# Five main high-level indices for all countries and years in long format
+big_5 <- fetchdem(indicators = "big_5", wide = FALSE)
+```
+
+There are also groupings available for the high-level, mid-level, and lower-level indices. For example, you could get all of the high-level indices for all countries in 2015 like this:
+
+```{r}
+# All high-level indices for all countries in 2015
+high_level_2015 <- fetchdem(indicators = "high_level",
+                        start_year = 2015, end_year = 2015)
+```
+
+Similarly, for low-level and mid-level indices you would specify `indicators = "low_level"` or `indicators = "mid_level"`.
+
+One useful bit of information for leveraging this functionality is that in V-Dem, indexes start with the prefix `v2x_`. `vdemlite` leverages this structure to enable the user to retrieve all of the indices and indicators that are used in the construction of a particular index.
+
+Specifically, you can retrieve all of the indices and indicators that are used in the construction of a particular index code by adding suffix `_all` to an index code. For example, to get all of the indicators that comprise the liberal democracy index for India, you would set `indicators` to `v2x_libdem_all` and `countries` to `IND`.
+
+```{r}
+# Indicators that comprise the liberal democracy index for India, all years
+lib_dem_ind_2010 <- fetchdem(indicators = "v2x_libdem_all",
+                            countries = "IND")
+```
+
+Similarly, you can get all of the indicators that comprise the Regimes of the World index for Venezuela by setting `indicators` to `v2x_regime_all` and `countries` to `VEN`.
+
+```{r}
+# Indicators that comprise the Regimes of the World index for Venezuela, all years
+regime_venezuela <- fetchdem(indicators = "v2x_regime_all",
+                           countries = "VEN")
+```
+
+There are some additional categories not included in the construction of indicators that are also included in `vdemlite` including `legitimation`, `civic_space`, `mass_mobilization`, `citizen_engagement`, `academic_space` and `background` (for background factors).
+
+Let's grab the background factors and polyarchy index for all countries in 2015 and use it to do some analysis. 
+
+```{r}
+# Polyarchy and background factors, all countries and years
+polyarchy_analysis <- fetchdem(indicators = c("v2x_polyarchy", "background"),
+                                start_year = 2015, end_year = 2015)
+
+# Run a regression
+model1 <- lm(v2x_polyarchy ~ log(e_gdppc) + 
+               e_pechmor + 
+               e_pelifeex + 
+               log(e_wb_pop), 
+             data = polyarchy_analysis)
+
+# Display the results
+summary(model1)
+```
+
+# Summarizing V-Dem Data
+
+Sometimes you might be curious to know about the coverage of a given index of indicator and to get a quick look at how the data look for individual countries. For this, `vdemlite` includes a function called `summarizedem()` that provides an interactive, table of summary statistics for a given index or indicator:
+
+```{r, eval = FALSE}
+summarizedem(indicator = NULL,
+              start_year = 1970,
+              end_year = 2023,
+              countries = NULL,
+              visualization = NULL)
+```
+
+`summarizedem()` takes up to four arguments: `indicator`, `start_year`, `end_year`, `countries`, and `visualization`. The `indicator` argument takes a character string representing exactly one V-Dem indicator code.
+
+The `start_year` and `end_year` arguments specify the range of years to fetch data for while the `countries` argument is a character vector of country codes.
+
+The `visualization` argument is a character string that specifies one of three visualizations to be included in the table: "sparkline", "density", or "histogram." The selection of one of these results in a sparkline, density plot or histogram placed in the final column of the table. 
+
+::: {.callout-important}
+It is not recommended to use the `visualization` argument with a large number of countries or years as it can take a long time to render. Thus it should be used judiciously in combination with the `countries` and `start_year`/`end_year` arguments.
+:::
+
+Here are some examples of how you can use `summarizedem()` to get a quick look at the data:
+
+Let's say you wanted to get a summary of the polyarchy index for all countries and years. 
+
+```{r}
+# Summary statistics for the polyarchy index
+summarizedem(indicator = "v2x_polyarchy")
+```
+
+If you wanted to get a summary of the polyarchy index for the USA and Sweden for the years 2000-2020:
+
+```{r}
+# Summary statistics for the polyarchy index for the USA and Sweden for 2000-2020
+summarizedem(indicator = "v2x_polyarchy",
+              start_year = 2000, end_year = 2020,
+              countries = c("USA", "SWE"))
+```
+
+Now let's say that you wanted to add saprklines to the table for the polyarchy index for the USA and Sweden for the years 2000-2020. 
+
+```{r}
+# Add sparklines to the Sweden/USA polyarchy table
+summarizedem(indicator = "v2x_polyarchy",
+              start_year = 2000, end_year = 2020,
+              countries = c("USA", "SWE"),
+              visualization = "sparkline")
+```
+
+# Searching for Indicators
+
+If you are wondering whether your favorite V-Dem indicator is available, `vdemlite` includes a function called `searchdem()` that, by default, produces a searchable table of all V-Dem indicators included in the dataset.
+
+```{r}
+# Produce a searchable table of the indicators
+
+searchdem()
+```
+
+The table is based on the [Structure of V-Dem Indices, Components and Indicators](https://v-dem.net/documents/41/v-dem_structureofaggregation_v14.pdf) document and includes four columns: the variable tag; the index or indicator descriptor; the level of the index or indicator (high-level index, mid-level index, lower-level index; or indicator); and a column called "Part" that distinguishes between V-Dem Indicators and Indices (part 1) and indices created using V-Dem data (part 2). 
+
+The default behavior is to return all indices and their descriptions. If a character vector of indices is provided, the function will return any sub-indices and indicators used to construct the selected indices.
+
+```{r}
+searchdem("v2x_libdem")
+```
+
+Note that the list of indicators associated with a given index corresponds to the same set of indicators that the `fetchdem()` function would retrieve with the `_all` suffix, e.g. `fetchdem(indicators = "v2x_libdem_all")`.  
+
+It is not possible to specify the groups of indicators that can be used in the `fetchdem()` function, e.g. `big5`, `v2x_libdem_all`, etc. in the `indices` argument. However, you can search for the "level" groupings (e.g. `high_level`, `mid_level` and `lower_level`) in the table itself. 
+
+

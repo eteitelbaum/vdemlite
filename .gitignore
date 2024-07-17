@@ -12,3 +12,4 @@
 # Package archives (optional if you don't want to track local builds, but still keep final submission tarballs)
 #*.tar.gz
 
+inst/doc

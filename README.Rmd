@@ -1,5 +1,8 @@
 ---
-output: github_document
+output: 
+  github_document:
+    html_preview: false
+    keep_html: true
 always_allow_html: true
 ---
 

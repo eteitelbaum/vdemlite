@@ -1,6 +1,5 @@
 ---
 output: github_document
-always_allow_html: true
 ---
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
@@ -52,19 +51,6 @@ my_indicators <- fetchdem(indicators = "v2x_polyarchy",
 
 You can retrieve data for multiple indicators and countries by using the combine function `c()`. `fetchdem` also includes functionality for retrieving groups of indicators as they relate to the structure and aggregation of the V-Dem dataset. See the documentation for details. 
 
-If you want a quick summary of an indicator or set of indicators, `summarizedem()` will provide an HTML table with summary statistics and missing data by country for the specified indicators.
+If you want a quick summary of an indicator or set of indicators, `summarizedem()` will provide a searchable HTML table with summary statistics as well as info on the missing data (grouped by country) for the specified indicators.
 
-```{r}
-# summarize the civil liberties index
-summarizedem("v2x_civlib")
-```
-
-Finally, you can use `searchdem` to find specific indicators or all of the indicators used to construct an index. For example, we can use `searchdem` to find all of the indicators used to construct the civil liberties index.
-
-```{r example}
-library(vdemlite)
-## search for indicators that contain the word "civil liberties"
-searchdem("civil liberties")
-```
-
-`searchdem()` without any arguments produces a searchable HTML table of all indicators in the dataset. 
+Finally, you can use `searchdem` to find specific indicators or all of the indicators used to construct an index. For example, we can use `searchdem("civil liberties"` to find all of the indicators used to construct the civil liberties index. `searchdem()` without any arguments produces a searchable HTML table of all indicators in the dataset. 

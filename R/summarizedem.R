@@ -6,7 +6,6 @@
 #' @param start_year An integer specifying the start year for the summary (default is 1970).
 #' @param end_year An integer specifying the end year for the summary (default is 2023).
 #' @param countries An optional character vector specifying the countries to include (default is NULL, which includes all countries).
-#' @param visualization An optional character string specifying the type of visualization to include in the summary table (default is NULL, which includes no visualization). Options include "sparkline", "density" for density plots, or "histogram". Note that it is not recommended to set the visualization parameter if the number of selected countries is large, as it may take a long time to render the table.
 #' @return A table summarizing the specified indicator by country.
 #' @examples
 #' # Summarize the liberal democracy index for all countries and years
@@ -18,18 +17,16 @@
 #' # Summarize the civil liberties index for the BRICS with sparklines
 #' countries = c("BRA", "RUS", "IND", "CHN", "ZAF")
 #' summarizedem(indicator = "v2x_civlib",
-#'               countries = countries,
-#'               visualization = "sparkline")
+#'               countries = countries)
 #'
-#' @import dplyr gt gtExtras
+#' @import dplyr gt
 #' @importFrom stats median sd
 #' @importFrom rlang sym !!
 #' @export
 summarizedem <- function(indicator = NULL,
                           start_year = 1970,
                           end_year = 2023,
-                          countries = NULL,
-                          visualization = NULL) {
+                          countries = NULL) {
 
   # Check if indicator is provided
   if (is.null(indicator)) {
@@ -103,6 +100,10 @@ summarizedem <- function(indicator = NULL,
   # Combine overall summary with country-specific summaries
   combined_summary <- bind_rows(overall_summary, summary_by_country)
 
+  # Convert to tibble
+  #combined_summary <- tibble::as_tibble(combined_summary)
+
+  # Create the summary table
   summary_table <- gt::gt(combined_summary) |>
     gt::tab_header(
       title = paste("Summary of", indicator, "by Country"),
@@ -127,22 +128,28 @@ summarizedem <- function(indicator = NULL,
       use_page_size_select = TRUE
       )
 
-  if (is.null(visualization)) {
-    return(summary_table |> cols_hide("indicator_data"))
-  } else if (visualization == "sparkline") {
-    return(summary_table |>
-             cols_label(indicator_data = "Sparkline") |>
-             gtExtras::gt_plt_sparkline(indicator_data))
-  } else if (visualization == "density") {
-    return(summary_table |>
-             cols_label(indicator_data = "Density Plot") |>
-             gtExtras::gt_plt_dist(indicator_data, type = "density"))
-  } else if (visualization == "histogram") {
-    return(summary_table |>
-             cols_label(indicator_data = "Histogram") |>
-             gtExtras::gt_plt_dist(indicator_data, type = "histogram"))
-    return(summary_table)
-  } else {
-    stop("Invalid visualization type. Please choose 'sparkline', 'density', or 'histogram'.")
-  }
+  return(summary_table |> cols_hide("indicator_data"))
+
+  ## Taking out the visualization arg for now as it stopped working,
+  ## add gtExtras to try it again later
+
+  # # Return table (with or without visualization)
+  # if (is.null(visualization)) {
+  #   return(summary_table |> cols_hide("indicator_data"))
+  # } else if (visualization == "sparkline") {
+  #   return(summary_table |>
+  #            cols_label(indicator_data = "Sparkline") |>
+  #            gtExtras::gt_plt_sparkline(indicator_data))
+  # } else if (visualization == "density") {
+  #   return(summary_table |>
+  #            cols_label(indicator_data = "Density Plot") |>
+  #            gtExtras::gt_plt_dist(indicator_data, type = "density"))
+  # } else if (visualization == "histogram") {
+  #   return(summary_table |>
+  #            cols_label(indicator_data = "Histogram") |>
+  #            gtExtras::gt_plt_dist(indicator_data, type = "histogram"))
+  # } else {
+  #   stop("Invalid visualization type. Please choose 'sparkline', 'density', or 'histogram'.")
+  # }
+  # @param visualization An optional character string specifying the type of visualization to include in the summary table (default is NULL, which includes no visualization). Options include "sparkline", "density" for density plots, or "histogram". Note that it is not recommended to set the visualization parameter if the number of selected countries is large, as it may take a long time to render the table.
 }

@@ -161,46 +161,25 @@ Sometimes you might be curious to know about the coverage of a given index of in
 summarizedem(indicator = NULL,
               start_year = 1970,
               end_year = 2023,
-              countries = NULL,
-              visualization = NULL)
+              countries = NULL)
 ```
 
-`summarizedem()` takes up to four arguments: `indicator`, `start_year`, `end_year`, `countries`, and `visualization`. The `indicator` argument takes a character string representing exactly one V-Dem indicator code.
+`summarizedem()` takes four arguments: `indicator`, `start_year`, `end_year` and `countries`. The `indicator` argument takes a character string representing exactly one V-Dem indicator code. The `start_year` and `end_year` arguments specify the range of years to fetch data for, while the `countries` argument is a character vector of country codes.
 
-The `start_year` and `end_year` arguments specify the range of years to fetch data for while the `countries` argument is a character vector of country codes.
-
-The `visualization` argument is a character string that specifies one of three visualizations to be included in the table: "sparkline", "density", or "histogram." The selection of one of these results in a sparkline, density plot or histogram placed in the final column of the table. 
-
-::: {.callout-important}
-It is not recommended to use the `visualization` argument with a large number of countries or years as it can take a long time to render. Thus it should be used judiciously in combination with the `countries` and `start_year`/`end_year` arguments.
-:::
-
-Here are some examples of how you can use `summarizedem()` to get a quick look at the data:
-
-Let's say you wanted to get a summary of the polyarchy index for all countries and years. 
+Let's say you wanted to get a summary of the polyarchy index for all countries and years:
 
 ```{r}
 # Summary statistics for the polyarchy index
 summarizedem(indicator = "v2x_polyarchy")
 ```
 
-If you wanted to get a summary of the polyarchy index for the USA and Sweden for the years 2000-2020:
+Or maybe you want a summary of the polyarchy index for the USA and Sweden for the years 2000-2020:
 
 ```{r}
 # Summary statistics for the polyarchy index for the USA and Sweden for 2000-2020
 summarizedem(indicator = "v2x_polyarchy",
               start_year = 2000, end_year = 2020,
               countries = c("USA", "SWE"))
-```
-
-Now let's say that you wanted to add saprklines to the table for the polyarchy index for the USA and Sweden for the years 2000-2020. 
-
-```{r}
-# Add sparklines to the Sweden/USA polyarchy table
-summarizedem(indicator = "v2x_polyarchy",
-              start_year = 2000, end_year = 2020,
-              countries = c("USA", "SWE"),
-              visualization = "sparkline")
 ```
 
 # Searching for Indicators

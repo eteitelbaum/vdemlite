@@ -2,7 +2,7 @@
 #'
 #' This function provides a searchable table of tags and names of of V-Dem indices included in `vdemlite`. The table is based on the [Structure of V-Dem Indices, Components and Indicators](https://v-dem.net/documents/41/v-dem_structureofaggregation_v14.pdf) document and includes four columns: the variable tag; the index or indicator descriptor; the level of the index or indicator (high-level index, mid-level index, lower-level index; or indicator); and a column called "Part" that distinguishes between V-Dem Indicators and Indices (part 1) and indices created using V-Dem data (part 2). The default behavior is to return all indices and their descriptions. If a character vector of indices is provided, the function will return any sub-indices and indicators used to construct the selected indices.
 #'
-#' @param indices A character vector of indices to search and expand. Useful when looking for sub-indices and indicators used to construct a high-level index. Default is `NULL`.
+#' @param indicator A character vector of indices to search and expand. Useful when looking for sub-indices and indicators used to construct a high-level index. Default is `NULL`.
 #' @return An interactive table with names and descriptions of V-Dem indicators and indices included in the `vdemlite` dataset.
 #' @import dplyr stringr gt gtExtras
 #' @examples
@@ -15,14 +15,14 @@
 #' # Return indicators used to construct women's political empowerment and rule of law indices
 #' searchdem(c("v2x_gender", "v2x_rule"))
 #' @export
-searchdem <- function(indices = NULL) {
+searchdem <- function(indicator = NULL) {
 
-  if (!is.null(indices)) {
+  if (!is.null(indicator)) {
     # Initialize vector of indicators
     expanded_tags <- c()
 
     # Loop through each index, pull and store relevant tags
-    for (index in indices) {
+    for (index in indicator) {
       if (stringr::str_starts(index, "v2x")) {
         levels <- lookup_tbl |>
           dplyr::filter(tag == index) |>
@@ -73,7 +73,7 @@ searchdem <- function(indices = NULL) {
     dplyr::distinct(tag, .keep_all = TRUE)
 
   # Filter based on selected categories
-  if (!is.null(indices)) {
+  if (!is.null(indicator)) {
     table_df <- lookup_tbl |>
       dplyr::filter(tag %in% expanded_tags) |>
       dplyr::distinct(tag, .keep_all = TRUE)

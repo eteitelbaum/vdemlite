@@ -4,10 +4,10 @@
 \alias{searchdem}
 \title{Search and Expand Tags Based on Indices}
 \usage{
-searchdem(indices = NULL)
+searchdem(indicator = NULL)
 }
 \arguments{
-\item{indices}{A character vector of indices to search and expand. Useful when looking for sub-indices and indicators used to construct a high-level index. Default is \code{NULL}.}
+\item{indicator}{A character vector of indices to search and expand. Useful when looking for sub-indices and indicators used to construct a high-level index. Default is \code{NULL}.}
 }
 \value{
 An interactive table with names and descriptions of V-Dem indicators and indices included in the \code{vdemlite} dataset.

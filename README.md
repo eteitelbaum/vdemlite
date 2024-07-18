@@ -25,7 +25,10 @@ frequently use V-Dem for contemporary analysis.
 The indicators included in `vdemlite` are taken from the [Structure of
 V-Dem Indices, Components and
 Indicators](https://v-dem.net/documents/41/v-dem_structureofaggregation_v14.pdf)
-document that is in turn drawn from Appendix A of the V-Dem codebook.
+document that is in turn drawn from Appendix A of the V-Dem codebook. It
+includes all of these indices and indicators plus some background
+factors a few additional commonly-used indicators. The dataset covers
+1970 to the present and includes all countries in the V-Dem dataset.
 
 ## Installation
 
@@ -48,27 +51,51 @@ indexes or indicators along with the years and countries you are
 interested in. The function will download the data and return a tibble
 with the specified indexes and indicators.
 
+Let’s grab the polyarchy score for the BRICS countries between 2000 and
+2020.
+
 ``` r
 library(vdemlite)
 
 # Grab the polyarchy scores for the United States between 2000 and 2020
-my_indicators <- fetchdem(indicators = "v2x_polyarchy",
+brics_dem <- fetchdem(indicators = "v2x_polyarchy",
                          start_year = 2000, end_year = 2020,
-                         countries = "USA")
+                         countries = c("BRA", "RUS", "IND", "CHN", "ZAF"))
 ```
 
-You can retrieve data for multiple indicators and countries by using the
-combine function `c()`. `fetchdem` also includes functionality for
-retrieving groups of indicators as they relate to the structure and
-aggregation of the V-Dem dataset. See the documentation for details.
+Now we can visualize the scores using `ggplot2` (or do whatever we want
+to do with them!).
+
+``` r
+library(ggplot2)
+
+ggplot(brics_dem, aes(x = year, y = v2x_polyarchy, color = country_name)) +
+  geom_line() +
+  labs(title = "Democracy in the BRICS Nations",
+       x = "Year",
+       y = "Polyarchy Score") +
+  scale_color_viridis_d(name = "Country", option = "turbo", end = .8) +
+  theme_minimal()
+```
+
+<img src="man/figures/README-unnamed-chunk-3-1.png" width="100%" />
+
+You can also retrieve data for multiple indicators by using the combine
+function `c()` just like we did when we specified multiple countries.
+`fetchdem` also includes functionality for retrieving groups of
+indicators as they relate to the structure and aggregation of the V-Dem
+dataset. See the documentation for details.
 
 If you want a quick summary of an indicator or set of indicators,
 `summarizedem()` will provide a searchable HTML table with summary
 statistics as well as info on the missing data (grouped by country) for
-the specified indicators.
+the specified indicators. `summarizedem()` can be used with the same
+arguments as `fetchdem()`, e.g. `indicators`, `start_year`, `end_year`,
+and `countries`.
 
-Finally, you can use `searchdem` to find specific indicators or all of
+Finally, you can use `searchdem()` to find specific indicators or all of
 the indicators used to construct an index. For example, we can use
-`searchdem("civil liberties"` to find all of the indicators used to
-construct the civil liberties index. `searchdem()` without any arguments
-produces a searchable HTML table of all indicators in the dataset.
+`searchdem("v2x_civlib")` to find all of the indicators used to
+construct the V- Dem civil liberties index. `searchdem()` without any
+arguments produces a searchable HTML table of all indicators in the
+dataset.

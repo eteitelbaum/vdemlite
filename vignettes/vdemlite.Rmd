@@ -18,15 +18,9 @@ knitr::opts_chunk$set(
 library(vdemlite)
 ```
 
-# Introduction
+# Data and Functionality
 
-`vdemlite` provides a lightweight version of the Varieties of Democracy (V-Dem) dataset that incorporates many of the core measures of V-Dem for the contemporary period and is easy to work with in R. The package provides functions for downloading and loading the data, as well as for exploring the data and searching for particular indicators.
-
-The package addresses two challenges that arise with the using full dataset. First, it can be readily used in cloud and production environments like Posit Cloud and shinyapps.io without having to purchase additional computing resources. Second, it provides user-friendly functions and arguments that makes it easier to download, filter, and explore the data in R. The goal is to make the dataset more accessible to new users who may not have completely developed a wrangling workflow and more convenient for more advanced users who frequently use V-Dem for contemporary analysis. 
-
-## Data and Functionality
-
-`vdemlite` incorporates data for 297 variables V-Dem indices and indicators from 1970 to the present and is organized around the structure of aggregation outlined in [this document](https://v-dem.net/documents/41/v-dem_structureofaggregation_v14.pdf) and in Appendix A of the [V-Dem Codebook](https://www.v-dem.net/documents/38/V-Dem_Codebook_v14.pdf). 
+`vdemlite` incorporates data for 297 variables V-Dem indices and indicators from 1970 to the present and is organized around the structure of aggregation outlined in [this document](https://v-dem.net/documents/41/v-dem_structureofaggregation_v14.pdf) and in Appendix A of the [V-Dem Codebook](https://www.v-dem.net/documents/38/V-Dem_Codebook_v14.pdf). It includes all of the indicators included in this document plus a few background factors and additional commonly-used indicators. The dataset covers 1970 to the present and includes all countries in the V-Dem dataset.
 
 There are three primary functions in the `vdemlite` package: 
   - `fetchdem()` provides functionality for downloading V-Dem data included in `vdemlite` and loads it into R. 
@@ -173,7 +167,7 @@ Let's say you wanted to get a summary of the polyarchy index for all countries a
 summarizedem(indicator = "v2x_polyarchy")
 ```
 
-Or maybe you want a summary of the polyarchy index for the USA and Sweden for the years 2000-2020:
+But you can also be more specific. Maybe you want a summary of the polyarchy index for the USA and Sweden for the years 2000-2020:
 
 ```{r}
 # Summary statistics for the polyarchy index for the USA and Sweden for 2000-2020
@@ -194,13 +188,7 @@ searchdem()
 
 The table is based on the [Structure of V-Dem Indices, Components and Indicators](https://v-dem.net/documents/41/v-dem_structureofaggregation_v14.pdf) document and includes four columns: the variable tag; the index or indicator descriptor; the level of the index or indicator (high-level index, mid-level index, lower-level index; or indicator); and a column called "Part" that distinguishes between V-Dem Indicators and Indices (part 1) and indices created using V-Dem data (part 2). 
 
-The default behavior is to return all indices and their descriptions. If a character vector of indices is provided, the function will return any sub-indices and indicators used to construct the selected indices.
-
-```{r}
-searchdem("v2x_libdem")
-```
-
-Note that the list of indicators associated with a given index corresponds to the same set of indicators that the `fetchdem()` function would retrieve with the `_all` suffix, e.g. `fetchdem(indicators = "v2x_libdem_all")`.  
+The default behavior is to return all indices and their descriptions but does have an argument `index` that is a character vector of indices or indicators. If a value for `index` is provided, the function will return any sub-indices and indicators used to construct the selected indices. For example `searchdem("v2x_libdem")` would return all of the sub-indices and indicators used to construct the polyarchy score.
 
 It is not possible to specify the groups of indicators that can be used in the `fetchdem()` function, e.g. `big5`, `v2x_libdem_all`, etc. in the `indices` argument. However, you can search for the "level" groupings (e.g. `high_level`, `mid_level` and `lower_level`) in the table itself. 
 

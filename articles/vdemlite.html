@@ -58,8 +58,6 @@
 
     
     
-<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://creativecommons.org/licenses/by-sa/4.0/" class="external-link">vdemlite</a></span><span class="op">)</span></span></code></pre></div>
 <div class="section level2">
 <h2 id="data-and-functionality">Data and Functionality<a class="anchor" aria-label="anchor" href="#data-and-functionality"></a>
 </h2>
@@ -80,12 +78,12 @@ for visualization. - <code><a href="../reference/searchdem.html">searchdem()</a>
 interactive, searchable table of the dataset.</p>
 <p>You can install the latest version of <code>vdemlite</code> from
 GitHub using the <code>pak</code> package:</p>
-<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co">#install.packages("pak)</span></span>
 <span><span class="fu">pak</span><span class="fu">::</span><span class="fu"><a href="https://pak.r-lib.org/reference/pkg_install.html" class="external-link">pkg_install</a></span><span class="op">(</span><span class="st">"eteitelbaum/vdemlite"</span><span class="op">)</span></span></code></pre></div>
 <p>Alternatively, you could use the <code>remotes</code> package or the
 <code>devtools</code> package:</p>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">remotes</span><span class="fu">::</span><span class="fu">install_github</span><span class="op">(</span><span class="st">"eteitelbaum/vdemlite"</span><span class="op">)</span></span>
 <span><span class="co"># or</span></span>
 <span><span class="fu">devtools</span><span class="fu">::</span><span class="fu">install_github</span><span class="op">(</span><span class="st">"eteitelbaum/vdemlite"</span><span class="op">)</span></span></code></pre></div>
@@ -98,7 +96,7 @@ GitHub using the <code>pak</code> package:</p>
 <code>vdemlite</code> dataset and retrieve data for specific indicators,
 groups of indicators, years, and countries. The function returns a data
 frame with the requested data.</p>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/fetchdem.html">fetchdem</a></span><span class="op">(</span>indicators <span class="op">=</span> <span class="cn">NULL</span>, </span>
 <span>          start_year <span class="op">=</span> <span class="fl">1970</span>, </span>
 <span>          end_year <span class="op">=</span> <span class="fl">2023</span>,</span>
@@ -127,7 +125,7 @@ the years 1980-2020. You could do this by setting
 <code>indicators</code> to <code>v2x_polyarchy</code> and
 <code>start_year</code> and <code>end_year</code> to 1980 and 2020,
 respectively.</p>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://creativecommons.org/licenses/by-sa/4.0/" class="external-link">vdemlite</a></span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Polyarchy score for all countries for 1980-2020</span></span>
@@ -139,14 +137,14 @@ if you wanted to get the polyarchy and clean elections index for the USA
 and Sweden, you could set <code>indicators</code> to
 <code>c("v2x_polyarchy", "v2xel_frefair")</code> and
 <code>countries</code> to <code>c("USA", "SWE")</code>.</p>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Polyarchy and clean elections index for USA and Sweden for 2000-2020</span></span>
 <span><span class="va">my_indicators</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/fetchdem.html">fetchdem</a></span><span class="op">(</span>indicators <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"v2x_polyarchy"</span>, <span class="st">"v2xel_frefair"</span><span class="op">)</span>,</span>
 <span>                           countries <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"USA"</span>, <span class="st">"SWE"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <p>By default, <code><a href="../reference/fetchdem.html">fetchdem()</a></code> returns the data in wide format.
 However, you can also return the data in long format by setting the
 <code>wide</code> argument to <code>FALSE</code>.</p>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Five main high-level indices for all countries and years in long format</span></span>
 <span><span class="va">big_5</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/fetchdem.html">fetchdem</a></span><span class="op">(</span>indicators <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"v2x_polyarchy"</span>, <span class="st">"v2xel_frefair"</span><span class="op">)</span>,</span>
 <span>                   countries <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"USA"</span>, <span class="st">"SWE"</span><span class="op">)</span>, wide <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
@@ -159,13 +157,13 @@ indexes and indicators that follow the structure of aggregation outlined
 in Appendix A of the V-Dem Codebook.</p>
 <p>Setting indicators to <code>big_5</code> will retrieve the five main
 high-level indices for all countries and years.</p>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Five main high-level indices for all countries and years in long format</span></span>
 <span><span class="va">big_5</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/fetchdem.html">fetchdem</a></span><span class="op">(</span>indicators <span class="op">=</span> <span class="st">"big_5"</span>, wide <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
 <p>There are also groupings available for the high-level, mid-level, and
 lower-level indices. For example, you could get all of the high-level
 indices for all countries in 2015 like this:</p>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># All high-level indices for all countries in 2015</span></span>
 <span><span class="va">high_level_2015</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/fetchdem.html">fetchdem</a></span><span class="op">(</span>indicators <span class="op">=</span> <span class="st">"high_level"</span>,</span>
 <span>                        start_year <span class="op">=</span> <span class="fl">2015</span>, end_year <span class="op">=</span> <span class="fl">2015</span><span class="op">)</span></span></code></pre></div>
@@ -183,7 +181,7 @@ are used in the construction of a particular index code by adding suffix
 indicators that comprise the liberal democracy index for India, you
 would set <code>indicators</code> to <code>v2x_libdem_all</code> and
 <code>countries</code> to <code>IND</code>.</p>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Indicators that comprise the liberal democracy index for India, all years</span></span>
 <span><span class="va">lib_dem_ind_2010</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/fetchdem.html">fetchdem</a></span><span class="op">(</span>indicators <span class="op">=</span> <span class="st">"v2x_libdem_all"</span>,</span>
 <span>                            countries <span class="op">=</span> <span class="st">"IND"</span><span class="op">)</span></span></code></pre></div>
@@ -191,7 +189,7 @@ would set <code>indicators</code> to <code>v2x_libdem_all</code> and
 Regimes of the World index for Venezuela by setting
 <code>indicators</code> to <code>v2x_regime_all</code> and
 <code>countries</code> to <code>VEN</code>.</p>
-<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Indicators that comprise the Regimes of the World index for Venezuela, all years</span></span>
 <span><span class="va">regime_venezuela</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/fetchdem.html">fetchdem</a></span><span class="op">(</span>indicators <span class="op">=</span> <span class="st">"v2x_regime_all"</span>,</span>
 <span>                           countries <span class="op">=</span> <span class="st">"VEN"</span><span class="op">)</span></span></code></pre></div>
@@ -203,7 +201,7 @@ of indicators that are also included in <code>vdemlite</code> including
 factors).</p>
 <p>Let’s grab the background factors and polyarchy index for all
 countries in 2015 and use it to do some analysis.</p>
-<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Polyarchy and background factors, all countries and years</span></span>
 <span><span class="va">polyarchy_analysis</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/fetchdem.html">fetchdem</a></span><span class="op">(</span>indicators <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"v2x_polyarchy"</span>, <span class="st">"background"</span><span class="op">)</span>,</span>
 <span>                                start_year <span class="op">=</span> <span class="fl">2015</span>, end_year <span class="op">=</span> <span class="fl">2015</span><span class="op">)</span></span>
@@ -251,7 +249,7 @@ individual countries. For this, <code>vdemlite</code> includes a
 function called <code><a href="../reference/summarizedem.html">summarizedem()</a></code> that provides an
 interactive, table of summary statistics for a given index or
 indicator:</p>
-<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/summarizedem.html">summarizedem</a></span><span class="op">(</span>indicator <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>              start_year <span class="op">=</span> <span class="fl">1970</span>,</span>
 <span>              end_year <span class="op">=</span> <span class="fl">2023</span>,</span>
@@ -265,7 +263,7 @@ range of years to fetch data for, while the <code>countries</code>
 argument is a character vector of country codes.</p>
 <p>Let’s say you wanted to get a summary of the polyarchy index for all
 countries and years:</p>
-<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Summary statistics for the polyarchy index</span></span>
 <span><span class="fu"><a href="../reference/summarizedem.html">summarizedem</a></span><span class="op">(</span>indicator <span class="op">=</span> <span class="st">"v2x_polyarchy"</span><span class="op">)</span></span></code></pre></div>
 <div id="mwlefoodfi" class=".gt_table" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
@@ -726,7 +724,7 @@ countries and years:</p>
 </div>
 <p>But you can also be more specific. Maybe you want a summary of the
 polyarchy index for the USA and Sweden for the years 2000-2020:</p>
-<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Summary statistics for the polyarchy index for the USA and Sweden for 2000-2020</span></span>
 <span><span class="fu"><a href="../reference/summarizedem.html">summarizedem</a></span><span class="op">(</span>indicator <span class="op">=</span> <span class="st">"v2x_polyarchy"</span>,</span>
 <span>              start_year <span class="op">=</span> <span class="fl">2000</span>, end_year <span class="op">=</span> <span class="fl">2020</span>,</span>
@@ -1195,7 +1193,7 @@ polyarchy index for the USA and Sweden for the years 2000-2020:</p>
 available, <code>vdemlite</code> includes a function called
 <code><a href="../reference/searchdem.html">searchdem()</a></code> that, by default, produces a searchable table
 of all V-Dem indicators included in the dataset.</p>
-<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Produce a searchable table of the indicators</span></span>
 <span></span>
 <span><span class="fu"><a href="../reference/searchdem.html">searchdem</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>

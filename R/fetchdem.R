@@ -106,9 +106,10 @@ fetchdem <- function(indicators = NULL,
   # Select indicators if provided
   if (!is.null(indicators)) {
     filtered_data <- filtered_data |>
-      dplyr::select(country_name,
-                    country_text_id,
-                    year,
+      dplyr::select(.data$country_name,
+                    .data$country_id,
+                    .data$country_text_id,
+                    .data$year,
                     # some indicators from codebook not available in vdem,
                     # so we use `any_of` to avoid errors
                     any_of(indicators))
@@ -119,7 +120,10 @@ fetchdem <- function(indicators = NULL,
     return(filtered_data)
   } else {
     long_data <- filtered_data |>
-      tidyr::pivot_longer(cols = -c(country_name, country_text_id, year),
+      tidyr::pivot_longer(cols = -c(.data$country_name,
+                                    .data$country_id,
+                                    .data$country_text_id,
+                                    .data$year),
                           names_to = "indicator",
                           values_to = "value")
     return(long_data)
